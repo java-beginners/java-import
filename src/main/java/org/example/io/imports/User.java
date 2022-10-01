@@ -12,9 +12,9 @@ public class User {
     private String email;
     @MyLength(val=20)
     private String phone;
-    @MyLength(val=5)
+    @MyLength(val=1)
     private String status;
-    @MyLength(val=10)
+    @MyLength(val=21)
     @MyFormat (dateFormat = "yyyy-MM-dd HH:mm:ss.S")
     private LocalDateTime createdDate;
     public User() {

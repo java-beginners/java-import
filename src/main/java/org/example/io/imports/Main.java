@@ -12,15 +12,16 @@ public class Main {
         final String PASSWORD = "WvGUYNPsjy";
 
         DelimiterFormatter formatter = new DelimiterFormatter(new User());
+//        FixedLengthFormatter formatter = new FixedLengthFormatter(new User());
         BuildFileName buildFileName = () -> {
             String fileName = "TEST.csv";
             return String.join("/", "src", "main", "export", fileName);
         };
-
         Transform transform = formatter::toStruct;
 
         FileReader reader = new FileReader(buildFileName, ",");
         Read read = reader::ReadDelimiterFile;
+//        Read read = reader::Read;
         JDBCConnection conn = new JDBCConnection(DB_URL, USER_NAME, PASSWORD);
         Writer writer = new Writer(conn, "users", new User(), true, 2 );
         Importer importer = new Importer(transform,

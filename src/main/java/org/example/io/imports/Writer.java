@@ -1,9 +1,9 @@
 package org.example.io.imports;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Writer {
     private String tableName;
@@ -78,12 +78,12 @@ public class Writer {
                             + ")";
                     System.out.println(qr);
                     stmt.addBatch(qr);
-                    if (i%batchSize==0){
-                        int[]count = stmt.executeBatch();
-                        result +=count.length;
+                    if (i % batchSize == 0) {
+                        int[] count = stmt.executeBatch();
+                        result += count.length;
                     }
                 }
-                int[]count = stmt.executeBatch();
+                int[] count = stmt.executeBatch();
                 result += count.length;
                 conn.commit();
 
@@ -136,4 +136,56 @@ public class Writer {
         return insertValues;
     }
 
+    public Integer createTable(String name, Object model, String primaryKey) throws IllegalAccessException {
+        Integer res = 0;
+        String qr = "create table " + name + "( ";
+        Field[] fs = model.getClass().getDeclaredFields();
+        for (int i = 0; i < fs.length; i++) {
+            String fn = fs[i].getName();
+            String ft = fs[i].getType().getSimpleName();
+            switch (ft) {
+                case "String":
+                case "string":
+                    if (fs[i].isAnnotationPresent(MyLength.class)) {
+                        qr += fn + " varchar(" + fs[i].getAnnotation(MyLength.class).val() + "),";
+                    }else{
+                        qr += fn +" varchar(max)";
+                    }
+                    ;
+                    break;
+                case "Integer":
+                case "int":
+                    qr += fn + " int,";
+                    break;
+                case "Float":
+                case "float":
+                    qr += fn + " float,";
+                    break;
+                case "double":
+                case "Double":
+                    qr += fn + " double,";
+                    break;
+                case "Date":
+                case "LocalDate":
+                    qr+=fn+" datetime,";
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (primaryKey != null) {
+            qr +="primary key(" + primaryKey+"))";
+        }else{
+            qr = qr.substring(0,qr.length()-1)+")";
+        }
+        try {
+            Connection conn = connection.getConnection();
+            Statement stmt = conn.createStatement();
+            res = stmt.executeUpdate(qr);
+            conn.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return res;
+    }
 }

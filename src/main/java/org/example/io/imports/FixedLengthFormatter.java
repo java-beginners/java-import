@@ -108,11 +108,10 @@ public class FixedLengthFormatter {
                             LocalDateTime dateField;
                             if (format.getFormat().length() > 0) {
                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format.getFormat());
-
-                                dateField = LocalDateTime.parse(line,formatter);
+                                dateField = LocalDateTime.parse(value,formatter);
                             } else {
                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateLayout);
-                                dateField = LocalDateTime.parse(line,formatter);
+                                dateField = LocalDateTime.parse(value,formatter);
                             }
                             field.set(record, dateField);
                             break;
