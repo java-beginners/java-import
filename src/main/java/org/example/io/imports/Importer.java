@@ -19,15 +19,12 @@ public class Importer {
     }
 
     public void importExecute() throws Exception {
-//        List<Object> itemStructs = new ArrayList<>();
-
         read.read((lines, isEndRead) -> {
-//            if (isEndRead != null) {
-//                write.write(itemStructs, true);
-//                return;
-//            }
             Object itemStruct = transform.transform(lines);
-//            itemStructs.add(itemStruct);
+            if(isEndRead == true || itemStruct == null){
+                write.write(itemStruct, true);
+                return ;
+            }
             write.write(itemStruct, false);
         });
     }

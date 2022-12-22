@@ -42,7 +42,7 @@ public class FileReader {
                 }
             }
             myReader.close();
-            next.next(new ArrayList<String>(), true);
+//            next.next(new ArrayList<String>(), true);
         } catch (Exception e) {
             e.printStackTrace();
             next.next(new ArrayList<String>(), false);
@@ -64,7 +64,7 @@ public class FileReader {
                 String data = myReader.nextLine().replace("\"","");
                 List<String> lines = new ArrayList<String>();
                 lines.addAll(Arrays.asList(data.split(delimiter)));
-                next.next(lines, null);
+                next.next(lines, false);
             }
             myReader.close();
             next.next(new ArrayList<>(), true);

@@ -55,7 +55,7 @@ public class Writer {
     }
     public Integer insert(Object obj){
         Connection conn = connection.getConnection();
-        boolean result = false;
+        int result = 0;
         try {
             List<String> fieldNames = getAllFieldName(obj.getClass());
             Statement stmt = conn.createStatement();
@@ -64,8 +64,8 @@ public class Writer {
             qr += "(" + String.join(",", fieldNames) + ") values ("
                     + String.join(",", buildInsertQueryValue(fieldValues))
                     + ")";
-            result = stmt.execute(qr);
-            if (result) {
+             result = stmt.executeUpdate(qr);
+            if (result == 1) {
                 System.out.println("successfully inserted");
             } else {
                 System.out.println("unsucessful insertion");
@@ -76,7 +76,7 @@ public class Writer {
             throw new RuntimeException(e);
         }
 
-        return result ?1:0;
+        return result;
     }
     public Integer InsertMany(List<Object> objs) throws IllegalAccessException {
         int result = 0;

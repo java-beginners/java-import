@@ -66,6 +66,9 @@ public class DelimiterFormatter {
     }
 
     public void scanLine(List<String> lines, Object model, Object record, Map<Integer, FixedLength> formatCols) throws Exception {
+        if(lines == null || lines.isEmpty()){
+            return;
+        }
         Field[] modelFields = model.getClass().getDeclaredFields();
         for (int i = 0; i < modelFields.length; i++) {
             String line = lines.get(i);

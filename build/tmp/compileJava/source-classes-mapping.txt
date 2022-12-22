@@ -2,8 +2,8 @@ org/example/io/imports/FixedLengthFormatter.java
  org.example.io.imports.FixedLengthFormatter
 org/example/io/imports/functional_Interface_define/BuildFileName.java
  org.example.io.imports.functional_Interface_define.BuildFileName
-org/example/io/imports/FileReader.java
- org.example.io.imports.FileReader
+org/example/io/imports/User.java
+ org.example.io.imports.User
 org/example/io/imports/functional_Interface_define/Read.java
  org.example.io.imports.functional_Interface_define.Read
 org/example/io/imports/JDBCConnection.java
@@ -16,8 +16,8 @@ org/example/io/imports/functional_Interface_define/Transform.java
  org.example.io.imports.functional_Interface_define.Transform
 org/example/io/imports/Importer.java
  org.example.io.imports.Importer
-org/example/io/imports/User.java
- org.example.io.imports.User
+org/example/io/imports/FileReader.java
+ org.example.io.imports.FileReader
 org/example/io/imports/TagAnnotation.java
  org.example.io.imports.MyFormat
  org.example.io.imports.MyLength
