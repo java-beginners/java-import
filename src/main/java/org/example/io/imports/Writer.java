@@ -53,7 +53,31 @@ public class Writer {
         }
         return res;
     }
+    public Integer insert(Object obj){
+        Connection conn = connection.getConnection();
+        boolean result = false;
+        try {
+            List<String> fieldNames = getAllFieldName(obj.getClass());
+            Statement stmt = conn.createStatement();
+            String qr = "INSERT INTO " + tableName;
+            List<Object> fieldValues = getAllFieldValues(obj);
+            qr += "(" + String.join(",", fieldNames) + ") values ("
+                    + String.join(",", buildInsertQueryValue(fieldValues))
+                    + ")";
+            result = stmt.execute(qr);
+            if (result) {
+                System.out.println("successfully inserted");
+            } else {
+                System.out.println("unsucessful insertion");
+            }
+            conn.close();
 
+        } catch (SQLException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result ?1:0;
+    }
     public Integer InsertMany(List<Object> objs) throws IllegalAccessException {
         int result = 0;
 

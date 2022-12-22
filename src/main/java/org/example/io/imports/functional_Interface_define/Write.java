@@ -4,5 +4,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface Write {
-    void write(List<Object> data, boolean endLineFlag) throws IllegalAccessException;
+    void write(Object data, boolean endLineFlag) throws IllegalAccessException;
 }
