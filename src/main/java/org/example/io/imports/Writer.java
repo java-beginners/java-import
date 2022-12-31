@@ -1,17 +1,32 @@
 package org.example.io.imports;
 
+import org.apache.logging.log4j.Logger;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Writer {
     private String tableName;
     private Boolean isDeleteBeforeImport;
     private JDBCConnection connection;
     private Integer batchSize = 10;
+    public static boolean isValid(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
 
-    public Writer(JDBCConnection connection, String tableName, Object model, Boolean isDeleteBeforeImport, Integer batchSize) {
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
+
+    public Writer(JDBCConnection connection, String tableName, Object model, Boolean isDeleteBeforeImport, Integer batchSize, String filename) {
         this.connection = connection;
         this.tableName = tableName;
         this.isDeleteBeforeImport = isDeleteBeforeImport;
@@ -26,6 +41,23 @@ public class Writer {
         }
         ;
         return fieldNames;
+    }
+    public String getEmail(List <String> st)
+    {
+        int count=0;
+        String s = st.toString();
+        String email="";
+        for (int i=0;i<s.length();i++)
+        {
+            if (s.charAt(i)==',') count++;
+            if (count==2){
+                for (int j=i+1;j<s.length();j++)
+                    if (s.charAt(j)!=',') email=email+s.charAt(j); else break;
+                    if (!email.equals("")) break;
+            }
+        }
+        email=email.substring(2,(email.length())-1);
+        return email;
     }
 
     private List<Object> getAllFieldValues(Object obj) throws IllegalAccessException {
@@ -53,7 +85,8 @@ public class Writer {
         }
         return res;
     }
-    public Integer insert(Object obj){
+    private int linenumber=0;
+    public Integer insert(Object obj) throws IllegalAccessException {
         Connection conn = connection.getConnection();
         int result = 0;
         try {
@@ -64,21 +97,22 @@ public class Writer {
             qr += "(" + String.join(",", fieldNames) + ") values ("
                     + String.join(",", buildInsertQueryValue(fieldValues))
                     + ")";
-             result = stmt.executeUpdate(qr);
-            if (result == 1) {
-                System.out.println("successfully inserted");
-            } else {
-                System.out.println("unsucessful insertion");
+            if (!isValid(getEmail(buildInsertQueryValue(fieldValues)))) {
+                System.out.println("Error Email:"+getEmail(buildInsertQueryValue(fieldValues))+" is not valid");
             }
-            conn.close();
+            else
+             result = stmt.executeUpdate(qr);
 
-        } catch (SQLException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            linenumber++;
+           SQLErrorDuplicate sqlErrorDuplicate=new SQLErrorDuplicate();
+            List<Object> fieldValues = getAllFieldValues(obj);
+           sqlErrorDuplicate.PrintError(new Main().getFilename(),buildInsertQueryValue(fieldValues),linenumber);
         }
 
         return result;
     }
-    public Integer InsertMany(List<Object> objs) throws IllegalAccessException {
+    public Integer InsertMany(List<Object> objs, String fileName) throws IllegalAccessException {
         int result = 0;
 
         try {
@@ -114,7 +148,7 @@ public class Writer {
                 if (result > 0) {
                     System.out.println("successfully inserted");
                 } else {
-                    System.out.println("unsucessful insertion");
+                    System.out.println("unsuccessfully inserted");
                 }
                 conn.close();
 
